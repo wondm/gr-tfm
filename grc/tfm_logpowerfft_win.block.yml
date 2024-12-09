@@ -1,0 +1,65 @@
+id: tfm_logpowerfft_win
+label: ሎጋሪዚሚክ ፓወር
+category: '[tfm]'
+
+#templates:
+# make: |-
+#    tfm.logpowerfft_win(${sample_rate}, ${fft_length}, ${ref_scale}, ${frame_rate})
+
+
+parameters:
+#- id: type
+#  label: Input Type
+#  dtype: enum
+#  options: [complex, float]
+#  option_attributes:
+#      fcn: [c, f]
+#  hide: part
+- id: sample_rate
+  label: Sample Rate
+  dtype: float
+  default: samp_rate  #You need to fill in your grc/tfm_logpowerfft_win.block.yaml
+- id: fft_size
+  label: Vector Length
+  dtype: float
+  default: fft_size 
+- id: ref_scale
+  label: Reference Scale
+  dtype: float
+  default: '2'
+- id: frame_rate 
+  label: Frame Rate
+  dtype: float
+  default: '30'
+
+inputs:
+- label: in
+#- domain: 
+  dtype: complex
+#  vlen: ...
+#  optional: ...
+
+outputs:
+- label: out
+  #domain: vector
+  dtype: float
+  vlen: ${fft_size}
+#  optional: ...
+
+templates:
+    imports: import gnuradio.tfm as tfm
+    make: |-
+        tfm.logpowerfft_win(                            
+            sample_rate=${sample_rate},
+            fft_size=${fft_size},
+            ref_scale=${ref_scale},
+            frame_rate=${frame_rate})          
+
+    callbacks:
+    - set_sample_rate(${sample_rate})
+    - set_fft_size(${fft_size})
+    #- set_ref_scale(${ref_scale})
+    #- set_frame_rate(${frame_rate})
+
+#${type.fcn},   
+file_format: 1

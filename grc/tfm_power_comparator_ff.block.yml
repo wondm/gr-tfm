@@ -1,0 +1,91 @@
+id: tfm_power_comparator_ff
+label: የኃይል ማነፃፀሪያ 
+category: '[tfm]'
+
+
+#  Make one 'parameters' list entry for every parameter you want settable from the GUI.
+#     Keys include:
+#     * id (makes the value accessible as keyname, e.g. in the make entry)
+#     * label (label shown in the GUI)
+#     * dtype (e.g. int, float, complex, byte, short, xxx_vector, ...)
+#     * default
+parameters:
+- id: sample_rate
+  label: Sample Rate
+  dtype: float
+  default: samp_rate
+- id: center_frequency
+  label: Center Frequency
+  dtype: float
+  default: freq
+- id: vector_length
+  label: vector Length
+  dtype: float
+  default: fft_size
+- id: directory
+  label: File Directory
+  dtype: string
+  default: directory
+- id: mode
+  label: Mode
+  dtype: float
+  default: '1'
+  options: ['1', '2']
+  option_labels: ['Percentage', 'Fixed Value']
+- id: diff_percentage
+  label: Percentage
+  dtype: float
+  default: '0'
+  hide: ${('all' if mode == 1 else 'none')}
+- id: diff_fixed_dBm
+  label: Fixed Value in dBm
+  dtype: float
+  default: '0'
+  hide: ${('all' if mode == 2 else 'none')}
+      
+#  Make one 'inputs' list entry per input and one 'outputs' list entry per output.
+#  Keys include:
+#      * label (an identifier for the GUI)
+#      * domain (optional - stream or message. Default is stream)
+#      * dtype (e.g. int, float, complex, byte, short, xxx_vector, ...)
+#      * vlen (optional - data stream vector length. Default is 1)
+#      * optional (optional - set to 1 for optional inputs. Default is 0)
+inputs:
+- label: in
+  #domain: stream
+  dtype: float
+  vlen: ${vector_length}
+#  optional: ...
+
+#outputs:
+#- label: ...
+#  domain: ...
+#  dtype: ...
+#  vlen: ...
+#  optional: ...
+
+templates:
+    imports: import gnuradio.tfm as tfm
+    make: |-
+        tfm.power_comparator_ff(
+            sample_rate=${sample_rate}, 
+            center_frequency=${center_frequency}, 
+            vector_length=${vector_length}, 
+            directory=${directory}, 
+            mode=${mode}, 
+            diff_fixed_dBm=${diff_fixed_dBm}, 
+            diff_percentage=${diff_percentage})
+  
+    callbacks:
+    - set_sample_rate(${sample_rate})
+    - set_center_frequency(${center_frequency})
+    - set_vector_length(${vector_length})
+    - set_directory(${directory})
+    #- set_mode(${mode})
+    #- set_diff_fixed_dBm(${diff_fixed_dBm})
+    #- set_diff_percentage(${diff_percentage})
+
+
+#  'file_format' specifies the version of the GRC yml format used in the file
+#  and should usually not be changed.
+file_format: 1
